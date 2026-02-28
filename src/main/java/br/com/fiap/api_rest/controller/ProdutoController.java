@@ -1,6 +1,7 @@
 package br.com.fiap.api_rest.controller;
 
 import br.com.fiap.api_rest.dto.ProdutoRequest;
+import br.com.fiap.api_rest.dto.ProdutoResponse;
 import br.com.fiap.api_rest.model.Produto;
 import br.com.fiap.api_rest.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -15,9 +16,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {
+    private final ProdutoService produtoService;
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
 
-    @Autowired
-    private ProdutoService produtoService;
 
     //CRUD - Create, Read, Update, Delete
     //POST, GET, PUT, DELETE
@@ -29,12 +32,12 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> readProduto(@PathVariable UUID id) {
+    public ResponseEntity<ProdutoResponse> readProduto(@PathVariable UUID id) {
 
         //@PathVariable -> url/produtos?id=1
         //@ResquestParam -> url/produtos/1
 
-        Produto produto = produtoService.read(id);
+        ProdutoResponse produto = produtoService.read(id);
         if (produto == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -42,8 +45,8 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Produto>> readProduto() {
-        List<Produto> produtos = produtoService.read();
+    public ResponseEntity<List<ProdutoResponse>> readProduto() {
+        List<ProdutoResponse> produtos = produtoService.read();
         if (produtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -52,7 +55,7 @@ public class ProdutoController {
 
     @PutMapping
     public ResponseEntity<Produto> updateProduto(@RequestBody Produto produto) {
-        Produto produtoExistente = produtoService.read(produto.getId());
+        ProdutoResponse produtoExistente = produtoService.read(produto.getId());
         if (produtoExistente == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
