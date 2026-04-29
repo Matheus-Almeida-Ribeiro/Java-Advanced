@@ -22,6 +22,9 @@ public class Usuario implements UserDetails {
     private String senha;
     private String role;
 
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (UserRole.ADMIN.equals(this.role)){
@@ -29,7 +32,18 @@ public class Usuario implements UserDetails {
                     new SimpleGrantedAuthority("ROLE_USER"));
         }else{
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
         }
+    }
+
+    public Usuario(String login, String encryptedPassword, UserRole role) {
+    }
+
+
+    public Usuario(String login, String senha, String role) {
+        this.login = login;
+        this.senha = senha;
+        this.role = role;
     }
 
     @Override
