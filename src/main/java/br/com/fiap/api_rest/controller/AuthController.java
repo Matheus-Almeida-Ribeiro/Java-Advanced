@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final UsuarioRepository usuarioRepository;
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    public  AuthController(UsuarioRepository usuarioRepository) {
+    public  AuthController(UsuarioRepository usuarioRepository, AuthenticationManager authenticationManager) {
         this.usuarioRepository = usuarioRepository;
+        this.authenticationManager = authenticationManager;
     }
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthDTO authDTO) {
         // Gera um token do usuario e senha
@@ -37,8 +39,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO registerDTO) {
-        if (usuarioRepository.findByLogin(registerDTO.login)) != null) {
-    return ResponseEntity.badRequest().build();
+        if (usuarioRepository.findByLogin(registerDTO.login()) != null) {
+            return ResponseEntity.badRequest().build();
         }
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.senha());
         Usuario novoUsuario = new Usuario(registerDTO.login(), encryptedPassword, registerDTO.role());
@@ -47,3 +49,4 @@ public class AuthController {
 
     }
 }
+
